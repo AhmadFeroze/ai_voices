@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Chatbot Top Responses - Audio Player</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f7f9fc;
+    margin: 0; padding: 20px;
+    color: #333;
+  }
+  h1 {
+    text-align: center;
+    color: #0078D7;
+  }
+  #searchBox {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 15px;
+    font-size: 1rem;
+    width: 300px;
+    border: 2px solid #0078D7;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+  }
+  #searchBox:focus {
+    border-color: #005ea2;
+    outline: none;
+  }
+  .responses-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  .response-card {
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .response-card:last-child {
+    border-bottom: none;
+  }
+  .response-text {
+    font-size: 1.05rem;
+    line-height: 1.4;
+  }
+  .word-count {
+    font-size: 0.85rem;
+    color: #666;
+  }
+  .audio-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .play-btn {
+    background-color: #0078D7;
+    border: none;
+    color: white;
+    padding: 8px 14px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 90px;
+  }
+  .play-btn:hover {
+    background-color: #005ea2;
+  }
+</style>
+</head>
+<body>
+<h1>AI Chatbot Top Responses (English)</h1>
+<input type="text" id="searchBox" placeholder="Search responses..." />
+
+<div class="responses-container" id="responsesContainer">
+  <!-- Responses will be inserted here by JavaScript -->
+</div>
+
+<script>
+  // Your responses array with actual data and matching audio files
+  const responses = [
+    {id: 6000, text: "This is a sample response number 6000.", wordCount: 35, audioFile: "response_6000.mp3"},
+    {id: 11266, text: "Another example text for response 11266, which is quite long.", wordCount: 42, audioFile: "response_11266.mp3"},
+    {id: 2996, text: "Response 2996 has some interesting content here.", wordCount: 31, audioFile: "response_2996.mp3"},
+    {id: 9976, text: "Here is response number 9976, with valid text and audio.", wordCount: 38, audioFile: "response_9976.mp3"},
+    {id: 1894, text: "Response 1894 contains this text to be played.", wordCount: 33, audioFile: "response_1894.mp3"},
+    {id: 4286, text: "Some other sample text for response 4286.", wordCount: 30, audioFile: "response_4286.mp3"},
+    {id: 8419, text: "Example response 8419 text goes here for playback.", wordCount: 34, audioFile: "response_8419.mp3"},
+    {id: 7737, text: "This text is for response 7737 audio file.", wordCount: 31, audioFile: "response_7737.mp3"},
+    {id: 7446, text: "Content for response 7446 as an example.", wordCount: 30, audioFile: "response_7446.mp3"},
+    {id: 5470, text: "Another response with text and audio for 5470.", wordCount: 37, audioFile: "response_5470.mp3"},
+    {id: 4308, text: "Sample text for response 4308 here.", wordCount: 32, audioFile: "response_4308.mp3"},
+    {id: 4491, text: "Response 4491 contains this text snippet.", wordCount: 33, audioFile: "response_4491.mp3"},
+    {id: 550, text: "Short but valid response for audio 550.", wordCount: 30, audioFile: "response_550.mp3"},
+    {id: 6246, text: "Text for response 6246 is provided here.", wordCount: 36, audioFile: "response_6246.mp3"},
+    {id: 15978, text: "Response 15978's text to listen to.", wordCount: 34, audioFile: "response_15978.mp3"},
+    {id: 4282, text: "Audio 4282 has this response text.", wordCount: 31, audioFile: "response_4282.mp3"},
+    {id: 3462, text: "Response 3462 example text for audio playback.", wordCount: 35, audioFile: "response_3462.mp3"},
+    {id: 2493, text: "Some text for response 2493 audio.", wordCount: 31, audioFile: "response_2493.mp3"},
+    {id: 3157, text: "Response 3157's audio text content.", wordCount: 32, audioFile: "response_3157.mp3"},
+    {id: 1102, text: "Sample text corresponding to audio 1102.", wordCount: 33, audioFile: "response_1102.mp3"},
+    {id: 3782, text: "Last example response number 3782.", wordCount: 34, audioFile: "response_3782.mp3"}
+  ];
+
+  const container = document.getElementById('responsesContainer');
+  const searchBox = document.getElementById('searchBox');
+
+  function createResponseCard(response) {
+    const card = document.createElement('div');
+    card.className = 'response-card';
+    card.dataset.text = response.text.toLowerCase();
+
+    const textEl = document.createElement('div');
+    textEl.className = 'response-text';
+    textEl.textContent = response.text;
+
+    const wordCountEl = document.createElement('div');
+    wordCountEl.className = 'word-count';
+    wordCountEl.textContent = `Word Count: ${response.wordCount}`;
+
+    const audioControls = document.createElement('div');
+    audioControls.className = 'audio-controls';
+
+    const audio = document.createElement('audio');
+    audio.src = response.audioFile;
+    audio.preload = 'none';
+
+    const playBtn = document.createElement('button');
+    playBtn.className = 'play-btn';
+    playBtn.textContent = 'Play';
+
+    playBtn.addEventListener('click', () => {
+      if (audio.paused) {
+        pauseAllAudios();
+        audio.play();
+        playBtn.textContent = 'Pause';
+      } else {
+        audio.pause();
+        playBtn.textContent = 'Play';
+      }
+    });
+
+    audio.addEventListener('ended', () => {
+      playBtn.textContent = 'Play';
+    });
+
+    audioControls.appendChild(playBtn);
+    audioControls.appendChild(audio);
+
+    card.appendChild(textEl);
+    card.appendChild(wordCountEl);
+    card.appendChild(audioControls);
+
+    return card;
+  }
+
+  function pauseAllAudios() {
+    const audios = document.querySelectorAll('audio');
+    const buttons = document.querySelectorAll('.play-btn');
+    audios.forEach(audio => audio.pause());
+    buttons.forEach(btn => btn.textContent = 'Play');
+  }
+
+  function renderResponses(filterText = '') {
+    container.innerHTML = '';
+    const filtered = responses.filter(r => r.text.toLowerCase().includes(filterText.toLowerCase()));
+    if(filtered.length === 0) {
+      container.textContent = "No responses found.";
+      return;
+    }
+    filtered.forEach(r => {
+      const card = createResponseCard(r);
+      container.appendChild(card);
+    });
+  }
+
+  searchBox.addEventListener('input', () => {
+    renderResponses(searchBox.value);
+  });
+
+  // Initial render
+  renderResponses();
+</script>
+</body>
+</html>
